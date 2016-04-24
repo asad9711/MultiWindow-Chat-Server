@@ -21,14 +21,9 @@ public TestClient()
 				System.out.println("enter ur name");
 
 			 nameOfClient=new Scanner(System.in).nextLine();
-
 			 dout.writeUTF(nameOfClient);//writing the name of client
    		dout.flush();
-
-
        eachClient= new EachClient(nameOfClient);//calling GUI from here
-
-
 			clientchat();
 
 		}catch(Exception e){}	
