@@ -1,9 +1,13 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 public class Myserver1
 {
 	ArrayList al=new ArrayList();ServerSocket ss;Socket s;
+
+	static ArrayList clientsList=new ArrayList();   static int count;
+	 ObjectInputStream oin;
 	public Myserver1()
 	{
 		try{
@@ -12,14 +16,20 @@ public class Myserver1
 			{
 				s=ss.accept();//waits for the client socket
 				// System.out.println(Myclient1.nameOfClient+" connected");
-			
+				oin=new ObjectInputStream(s.getInputStream());
+				ClientLayout clientLayout=(ClientLayout)oin.readObject();
+				clientsList.add(clientLayout);
+			     
 				al.add(s);
+				System.out.println("startting server thread ");
 				Runnable r=new MyThread(s,al);
 				Thread t=new Thread(r);
 				t.start();
 			}
 		}catch(Exception e){}
 		}
+
+
 		public static void main(String ar[])
 		{
 			new Myserver1();
@@ -40,23 +50,22 @@ public class Myserver1
 				DataInputStream din=new DataInputStream(s.getInputStream());
 				do{
 
-					s1=din.readUTF();
-					if(i==0)//displaying the name of client everytime a client gets connected
-					   System.out.println(s1+"  connected");
-					else
+					s1=din.readUTF();//message of each client
+					// if(i==0)//displaying the name of client everytime a client gets connected
+					//     System.out.println(s1+"  connected");
+					// else
 						System.out.println(s1);
-					i++;
+					// i++;
 					if(!s1.equals("stop"))
-					{
-					 tellEveryone(s1); 
-                         }
-
+					      {
+					       tellEveryone(s1); 
+                           }
 						else
 						{
 							DataOutputStream dout=new DataOutputStream(s.getOutputStream());
 							dout.writeUTF(s1);
 							dout.flush();
-							al.remove(s);
+							al.remove(s);//logging out a client from the server.
 						}
 						}while(!s1.equals("stop"));
 				}catch(Exception e){}
@@ -71,7 +80,7 @@ public class Myserver1
 						DataOutputStream dout=new DataOutputStream(sc.getOutputStream());
                         dout.writeUTF(s1);
 						dout.flush();
-						System.out.println("client");
+						// System.out.println("client");
 					}catch(Exception e){}
 				}
 			}
